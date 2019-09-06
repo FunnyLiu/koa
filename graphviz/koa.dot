@@ -1,0 +1,63 @@
+digraph tree
+{
+    nodesep=0.5;
+    charset="UTF-8";
+    rankdir=LR;
+    fixedsize=true;
+    compound=true;
+    node [style="rounded,filled", width=0, height=0, shape=box, fillcolor="#E5E5E5", concentrate=true]
+
+    subgraph cluster_application {
+        label = "application.js";
+        "Application"->"EventEmitter"[label="extends"]
+        "Application.middleware"
+        "Application.context"
+        "Application.context.app"
+        "Application.context.req"
+        "Application.context.res"
+        "Application.context.request"
+        "Application.context.response"
+        "Application.request"
+        "Application.response"
+        "Application.listen()"->"http.createServer"->"Application.callback()"
+        "Application.use()"
+        "Application.callback()"
+        "Application.createContext()"
+        "Application.handleRequest()"
+        "respond()"->"http.ServerResponse.end()"
+    }
+    "Application.context"->"ctx";
+    "Application.request"->"request";
+    "Application.response"->"response";
+    "Application.use()"->"Application.middleware"[label="push"]
+    "Application.createContext()"->"Application.context"[headlabel="赋值",color=red]
+    "Application.context"->"Application.context.app"[color=red]
+    "Application.context"->"Application.context.req"->"http.IncomingMessage"[color=red]
+    "Application.context"->"Application.context.res"->"http.ServerResponse"[color=red]
+    "Application.context"->"Application.context.request"->"Application.request"[color=red]
+    "Application.context"->"Application.context.response"->"Application.response"[color=red]
+    "Application.callback()"->"Application.middleware"[color=blue,label="1.合并中间件"]
+    "Application.middleware"->"compose()"[color=blue,label="1.合并中间件"]
+    "Application.callback()"->"Application.createContext()"[color=blue,label="2.创建ctx并赋值"]
+    "Application.callback()"->"Application.handleRequest()"[color=blue,label="3.处理响应"]
+    "Application.handleRequest()"->"respond()"[color=blue,label="3.处理响应"]
+    subgraph cluster_context {
+        label = "context.js";
+        "ctx"
+    }
+    "ctx"->"delegates模块"[headlabel="基于",taillabel="挂载属性"]
+    subgraph cluster_request {
+        label = "request.js";
+        "request"->"http.IncomingMessage"[headlabel="基于",taillabel="封装属性"]
+        "request"->"parseurl/querystring/type-is/fresh/content-type模块"[headlabel="基于",taillabel="封装属性"]
+    }
+    subgraph cluster_response {
+        label = "response.js";
+        "response"->"http.ServerResponse"[headlabel="基于",taillabel="封装属性"]
+        "response"->"statuses/assert/type-is/vary模块"[headlabel="基于",taillabel="封装属性"]
+    }
+    subgraph cluster_compose {
+        label = "koa-compose";
+        "compose()" ->"中间件引擎"[dir=none]
+    }
+}

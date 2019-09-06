@@ -15,6 +15,98 @@
 
   Koa is not bundled with any middleware.
 
+## 模块依赖
+
+模块依赖参考：[npmgraph](http://npm.broofa.com/?q=koa)
+
+<img src="https://raw.githubusercontent.com/brizer/graph-bed/master/img/20190904170229.png"/>
+
+## 目录结构
+
+``` bash
+├── application.js - 入口文件，封装app.***
+├── context.js - ctx对象，处理中间件和包装
+├── request.js - ctx.request对象
+└── response.js - ctx.response对象
+```
+
+## 执行流程
+
+![](./graphviz/koa.dot.svg)
+
+application.js为入口文件。
+
+application对象继承于原生event模块的EventEmitter。
+
+当我们使用app.use时，其实是给app.middleware中间件列表中增加中间件函数。
+
+在app.listen时，调用了app.callback函数，执行了以下几步：
+
+1、合并中间件
+
+通过koa-compose模块，对中间件列表进行合并处理。该模块也是koa的中间件引擎部分。
+
+2、创建ctx对象
+
+通过app.createContext方法创建ctx对象，其中app.context来自context.js文件，底层通过delegates模块将request，response的一些属性原型指向，从而实现别名挂载。app.context.req和app.context.res分别来自原生http模块的IncomingMessage和ServerResponse，并在其上层封装了app.context.request和app.context.response。
+
+3、处理响应
+
+通过app.handleRequest方法处理响应，底层基于ServerResponse.end方法。
+
+至于request和response文件，很多底层属性的封装基于第三方模块，这些选型和express非常类似，这里就不一一描述了。可以参考[express源码解析](https://github.com/FunnyLiu/express/tree/readsource#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B)
+
+---
+
+## 核心第三方模块
+
+除了koa源码，一些核心模块的源码也是值得一读的，有助于我们理解整个web应用。
+
+### koa-compose
+
+[源码解读](https://github.com/FunnyLiu/compose/tree/readsource)
+
+该模块是koa中间件和核心引擎，作用是将多个中间件合并，在源码中，所有通过use堆积的中间件列表，最后都会通过该方法来处理。
+
+### koa-logger
+
+[源码解读](https://github.com/FunnyLiu/logger/tree/readsource)
+
+核心就是通过洋葱模型，在前半阶段拦截request，在后半阶段通过http.ServerResponse的finish和close事件判断响应结束，拦截响应。
+
+### koa-static
+
+[源码解读](https://github.com/FunnyLiu/static/tree/readsource)
+
+通过defer参数来决定next的执行位置，从而决定该中间件的执行时机。
+
+然后底层基于koa-send模块的完成真正的静态资源文件服务逻辑。
+
+### koa-send
+
+[源码解读](https://github.com/FunnyLiu/send/tree/readsource)
+
+分析出指向的文件的具体文件路径，然后进行content-encoding压缩。
+
+最后通过fs.createReadStream将文件以可读流的方式，挂载在ctx.body上，交给koa最后去res.end。
+
+### koa-views
+
+[源码解读](https://github.com/FunnyLiu/koa-views/tree/readsource)
+
+提供一个render方法挂载到ctx和ctx.response上。
+
+该方法基于getPaths模块，通过模板获取到真实路径。然后如果是html文件，则直接通过koa-send模块进行静态文件处理方式。koa-send底层通过读取文件可读流的方式，将内存挂载到ctx.body上。
+
+如果是模板文件，则通过consolidate模块获取对应模板的render方法，拼接为html后，挂载到ctx.body上。
+
+
+### koa-bodyparser
+
+### koa-router
+
+
+
 ## Installation
 
 Koa requires __node v7.6.0__ or higher for ES2015 and async function support.
