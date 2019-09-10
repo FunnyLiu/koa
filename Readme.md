@@ -103,6 +103,11 @@ application对象继承于原生event模块的EventEmitter。
 
 ### koa-bodyparser
 
+[源码解读](https://github.com/FunnyLiu/bodyparser/tree/readsource)
+
+本身封装了一个中间件，使用co-body对请求内容进行解析，将解析后的值挂载在ctx.request.body上。 co-body本身是基于raw-body来完成具体的操作，这和express依赖的body-parser是一致的。
+
+
 ### koa-router
 
 
