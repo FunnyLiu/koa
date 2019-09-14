@@ -110,6 +110,17 @@ application对象继承于原生event模块的EventEmitter。
 
 ### koa-router
 
+[源码解读](https://github.com/FunnyLiu/koa-router/tree/readsource)
+
+相比express的Router/Layer/Route模型。koa-router只有Router/Layer。
+
+Layer用来负责通过path的各种methods的中间件，Router则是不同path的。
+
+各个方法底层都是通过Router.register()对路由和中间件方法注册，最后暴露的中间件函数的通过Router.routes()来完成。
+
+将所有的中间件基于koa-compose合并为洋葱模型，对外暴露。
+
+
 
 
 ## Installation
