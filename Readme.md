@@ -120,7 +120,13 @@ Layer用来负责通过path的各种methods的中间件，Router则是不同path
 
 将所有的中间件基于koa-compose合并为洋葱模型，对外暴露。
 
+### koa-error 
 
+[源码解读](https://github.com/FunnyLiu/error/tree/readsource)
+
+利用try-catch，配合koa的洋葱模型，在最外层使用该中间件，即可达到异常捕获效果。
+
+通过ctx.accepts类型的不同，采用不同的处理方法。
 
 
 ## Installation
