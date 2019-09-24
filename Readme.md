@@ -128,6 +128,13 @@ Layer用来负责通过path的各种methods的中间件，Router则是不同path
 
 通过ctx.accepts类型的不同，采用不同的处理方法。
 
+### koa-onerror 
+
+[源码分析](https://github.com/FunnyLiu/onerror/tree/readsource)
+
+和koa-error使用try-catch的思路不同，这里采用hack了ctx.onerror方法的方式来处理异常。这样就可以处理 steams和and event的errors，并且提供了更加灵活的配置参数。
+
+
 
 ## Installation
 
