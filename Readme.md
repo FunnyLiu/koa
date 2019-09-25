@@ -134,7 +134,11 @@ Layer用来负责通过path的各种methods的中间件，Router则是不同path
 
 和koa-error使用try-catch的思路不同，这里采用hack了ctx.onerror方法的方式来处理异常。这样就可以处理 steams和and event的errors，并且提供了更加灵活的配置参数。
 
+### koa-session
 
+[源码分析](https://github.com/FunnyLiu/session/tree/readsource)
+
+给ctx挂载session对象，通过私有变量Symbol维护session列表。默认从cookie中存取，也可以通过配置读取自第三方如redis等。
 
 ## Installation
 
