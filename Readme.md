@@ -68,6 +68,13 @@ application对象继承于原生event模块的EventEmitter。
 
 该模块是koa中间件和核心引擎，作用是将多个中间件合并，在源码中，所有通过use堆积的中间件列表，最后都会通过该方法来处理。
 
+### koa-mount
+
+[源码分析](https://github.com/FunnyLiu/mount/tree/readsource)
+
+提供一个中间件，使得子路由可以挂在koa的app对象或者中间件。
+对传入的app对象或者中间件对象进行类型判断。基于koa-compose合并中间件。返回一个中间件，在请求阶段如果路径匹配正确，则执行合并后的中间件内容。
+
 ### koa-logger
 
 [源码解读](https://github.com/FunnyLiu/logger/tree/readsource)
@@ -139,6 +146,8 @@ Layer用来负责通过path的各种methods的中间件，Router则是不同path
 [源码分析](https://github.com/FunnyLiu/session/tree/readsource)
 
 给ctx挂载session对象，通过私有变量Symbol维护session列表。默认从cookie中存取，也可以通过配置读取自第三方如redis等。
+
+
 
 ## Installation
 
